@@ -7,7 +7,7 @@
  * @author Facyla <admin@facyla.fr>
  * @author Carlos Quiles <cquiles@cvrank.org>
  * @copyright 2010-2011 Consultora Nivel7 Ltda.
- * @copyright 2010-2011 Facyla
+ * @copyright 2010-2011 FormaVia
  * @copyright 2011-2012 CVRank
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @link http://cvrank.org/

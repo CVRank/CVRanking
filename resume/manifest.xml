@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
 	<name>CVRanking Resume</name>
-	<author>Carlos Quiles @ CVRank, Facyla, Pablo Borbón @ Consultora Nivel7 Ltda.</author> 
+	<author>Carlos Quiles @ CVRank, Facyla @ FormaVia, Pablo Borbón @ Consultora Nivel7 Ltda.</author> 
 	<version>1.5 alpha</version>
 	<blurb>Resume / ePortfolio plugin</blurb>
 	<description>Adds Resume/ePortfolio plugin with detailed section fields, according to CVRank XML Namespace. 
