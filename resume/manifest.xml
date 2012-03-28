@@ -1,41 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
-	<name>CVRanking Resume</name>
-	<author>Carlos Quiles @ CVRank, Facyla, Pablo Borbón @ Consultora Nivel7 Ltda.</author> 
-	<version>1.5 alpha</version>
-	<blurb>Resume / ePortfolio plugin</blurb>
-	<description>Adds Resume/ePortfolio plugin with detailed section fields, according to CVRank XML Namespace. 
-        Scores and CVRank calculation functions are available, according to CVRank algorithm.</description>
-	<website>http://www.cvrank.org/</website>
-	<copyright>(C) CVRank 2011-2012, (C) Facyla 2010-2011, (C) Consultora Nivel7 Ltda. 2010-2011</copyright>
-	<license>GNU Public License version 2</license>
- 
-	<category>3rd_party_integration</category>
- 
-	<!-- All plugins must require either elgg_version or elgg_release. -->
-	<requires>
-		<type>elgg_version</type>
-		<version>2011010401</version>
-	</requires>
- 
-	<!-- The path is relative to the plugin's root. -->
-	<screenshot>
-		<description>Elgg resume.</description>
-		<path>screenshots/resume.png</path>
-	</screenshot>
- 
-	<suggests>
-		<type>plugin</type>
-		<name>Profile Manager</name>
-		<version>7.0</version>
-	</suggests>
+<?xml version="1.3" encoding="UTF-8"?>
+<plugin_manifest>
+  <field key="author" value="Carlos Quiles @ CVRank, Facyla, Pablo Borbón @ Consultora Nivel7 Ltda." />
+  <field key="version" value="1.4.6" />
+  <field key="description" value="CVRanking resume plugin for CVR calculations and CVRank portable XML."/>
+  <field key="website" value="http://cvrank.org/" />
+  <field key="copyright" value="(C) CVRank 2012" />
+  <field key="licence" value="GNU Public License version 2" />
+  <field key="elgg_version" value="2010040201" />
 </plugin_manifest>
 
 <!--
-1.5 alpha:
-  - Upgraded to Elgg 1.8.x
-  - First release for alpha testing
-  
+1.4.6 : 
+  - added support for CVRank algorithm
 1.4.5 :
   - regular link for printed version (no JS)
 

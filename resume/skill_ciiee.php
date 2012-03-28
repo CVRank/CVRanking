@@ -20,7 +20,7 @@ set_context('resumes_form');
 set_page_owner($_SESSION['user']->guid);
 
 // set the title
-$title = elgg_echo('resume:add:workexperience');
+$title = elgg_echo('resume:add:skill_ciiee');
 
 // start building the main column of the page
 $area2 = elgg_view_title($title);
@@ -28,10 +28,10 @@ $area2 = elgg_view_title($title);
 // Add the form to this section
 if (get_input('id')) {
   $gid = (int) get_input('id');
-  $workexperience = get_entity($gid);
-  $area2 .= elgg_view("resume/workexperience_form", array('entity' => $workexperience));
+  $skill = get_entity($gid);
+  $area2 .= elgg_view("resume/skill_ciiee_form", array('entity' => $skill));
 } else {
-  $area2 .= elgg_view("resume/workexperience_form");
+  $area2 .= elgg_view("resume/skill_ciiee_form");
 }
 // layout the page
 $body = elgg_view_layout('two_column_left_sidebar', '', $area2);

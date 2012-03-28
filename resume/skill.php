@@ -1,15 +1,23 @@
 <?php
-
+/**
+ * Resume
+ *
+ * @package Resume
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Pablo Borbón @ Consultora Nivel7 Ltda.
+ * @copyright Consultora Nivel7 Ltda.
+ * @link http://www.nivel7.net
+ */
 // Load Elgg engine
 include_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
 
 // make sure only logged in users can see this page
 gatekeeper();
 // set context to add a "cancel" option
-elgg_set_context('resumes_form');
+set_context('resumes_form');
 
 //set_page_owner(get_loggedin_user()->getGUID());
-elgg_set_page_owner_guid($_SESSION['user']->guid);
+set_page_owner($_SESSION['user']->guid);
 
 // set the title
 $title = elgg_echo('resume:add:skill');
@@ -21,11 +29,12 @@ $area2 = elgg_view_title($title);
 if (get_input('id')) {
   $gid = (int) get_input('id');
   $skill = get_entity($gid);
-  $area2 .= elgg_view("resume/form/skill_form", array('entity' => $skill));
+  $area2 .= elgg_view("resume/skill_form", array('entity' => $skill));
 } else {
-  $area2 .= elgg_view("resume/form/skill_form");
+  $area2 .= elgg_view("resume/skill_form");
 }
 // layout the page
-$body = elgg_view('page/layouts/one_sidebar', array('content' => $area2));
+$body = elgg_view_layout('two_column_left_sidebar', '', $area2);
+
 // draw the page
-echo elgg_view_page ($title, $body);
+page_draw($title, $body);

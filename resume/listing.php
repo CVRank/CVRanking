@@ -20,19 +20,20 @@ set_context('resumes_form');
 set_page_owner($_SESSION['user']->guid);
 
 // set the title
-$title = elgg_echo('resume:add:workexperience');
+$title = elgg_echo('resume:experiences');
 
 // start building the main column of the page
 $area2 = elgg_view_title($title);
 
-// Add the form to this section
-if (get_input('id')) {
-  $gid = (int) get_input('id');
-  $workexperience = get_entity($gid);
-  $area2 .= elgg_view("resume/workexperience_form", array('entity' => $workexperience));
-} else {
-  $area2 .= elgg_view("resume/workexperience_form");
+//$experiences = get_entities_from_metadata('startdate', '', 'experience', '', $_SESSION['user']->guid, 999);
+//$experiences = get_entities_from_annotations("", "experience", "typology", null, $_SESSION['user']->guid, 0, 99, 0, "asc", false, 0, 0);
+//$experiences = get_user_objects($_SESSION['user']->guid, "experience", 99, 0);
+$experiences = get_user_objects_by_metadata($_SESSION['user']->guid, "experience", array('typology'=>"work"), 99, 0);
+foreach ($experiences as $experience) {
+  $area2 .= elgg_view_entity($experience, false);
 }
+
+
 // layout the page
 $body = elgg_view_layout('two_column_left_sidebar', '', $area2);
 

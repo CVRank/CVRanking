@@ -16,25 +16,13 @@ $startdate = get_input('startdate');
 $enddate = get_input('enddate');
 $ongoing = get_input('ongoing');
 $heading = get_input('heading');
-$level = get_input('level');
-$skilltype = get_input('skilltype');
-
-$certs = get_input('certs');
-$scores = get_input('scores');
-$structures = get_input('structures');
-
-$counted_certs = count($certs);
-
-for( $i = 0; $i < $counted_certs; $i++ ) {
-      $starts[] = get_input('starts'.$i);
-      $ends[] = get_input('ends'.$i);
- }
- 
-$contact = get_input('contact');
+$typology = get_input('typology');
+$structure = get_input('structure');
 $description = get_input('description');
+$importance = get_input('importance');
+$contact = get_input('contact');
+$access_id = get_input('access_id');
 
-$access_id = get_input('access_id');
-$access_id = get_input('access_id');
 
 // create a new object
 $experience = new ElggObject();
@@ -42,20 +30,15 @@ $experience->startdate = $startdate;
 $experience->enddate = $enddate;
 $experience->ongoing = $ongoing;
 $experience->heading = $heading;
-$experience->level = $level;
-$experience->skilltype = $skilltype;
-
-$experience->certs = $certs;
-$experience->scores = $scores;
-$experience->structures = $structures;
-$experience->starts = $starts;
-$experience->ends = $ends;
-
-$experience->contact = $contact;
+$experience->typology = $typology;
+$experience->structure = $structure;
 $experience->description = $description;
+$experience->importance = $importance;
+$experience->contact = $contact;
+// Titre déduit des autres infos = (typology :) jobtitle @ organisation
+$experience->title = $heading . ' @ ' . $structure;
+$experience->subtype = 'experience';
 
-$experience->title = $heading . ' (' . $typology . ')';
-$experience->subtype = 'skill';
 
 // allow access rights for the resume
 $experience->access_id = $access_id;
@@ -68,7 +51,7 @@ $experience->save();
 system_message(elgg_echo('resume:OK'));
 
 // add to river
-add_to_river('river/object/resume/create', 'create', get_loggedin_userid(), $skill->guid);
+add_to_river('river/object/resume/create', 'create', get_loggedin_userid(), $experience->guid);
 
 // forward user to a main page
 forward($CONFIG->wwwroot . "pg/resumes/" . get_loggedin_user()->username);

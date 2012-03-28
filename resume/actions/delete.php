@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Resume
+ *
+ * @package Resume
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Pablo Borbón @ Consultora Nivel7 Ltda.
+ * @copyright Consultora Nivel7 Ltda.
+ * @link http://www.nivel7.net
+ */
 // Make sure we're logged in (send us to the front page if not)
 gatekeeper();
 
@@ -8,17 +17,18 @@ $guid = (int) get_input('id');
 
 // Make sure we actually have permission to edit
 $object_to_delete = get_entity($guid);
-$object_subtype = $object_to_delete->getSubtype();
 if (!is_null($object_to_delete)
         && can_edit_entity($guid)
         && (
-           $object_subtype == "cvranking"
-        || $object_subtype == "education"
-        || $object_subtype == "workexperience"
-        || $object_subtype == "language"
-        || $object_subtype == "research"
-        || $object_subtype == "publication"
-        || $object_subtype == "skill")
+           $object_to_delete->getSubtype() == "cvranking"
+        || $object_to_delete->getSubtype() == "education"
+        || $object_to_delete->getSubtype() == "workexperience"
+        || $object_to_delete->getSubtype() == "language"
+        || $object_to_delete->getSubtype() == "research"
+        || $object_to_delete->getSubtype() == "publication"
+        || $object_to_delete->getSubtype() == "experience"
+        || $object_to_delete->getSubtype() == "skill"
+        || $object_to_delete->getSubtype() == "skill_ciiee")
 ) {
 
     // Delete it!
@@ -30,5 +40,5 @@ if (!is_null($object_to_delete)
         register_error(elgg_echo('resume:notOK'));
     }
     // Forward to the main page
-    forward($CONFIG->wwwroot . "resumes/" . elgg_get_logged_in_user_entity()->username. "?tab=" . $object_subtype);
+    forward($CONFIG->wwwroot . "pg/resumes/" . get_loggedin_user()->username);
 }

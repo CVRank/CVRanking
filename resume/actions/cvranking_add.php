@@ -1,11 +1,19 @@
 <?php
-
+/**
+ * Resume
+ *
+ * @package Resume
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Pablo Borbón @ Consultora Nivel7 Ltda.
+ * @copyright Consultora Nivel7 Ltda.
+ * @link http://www.nivel7.net
+ */
 // only logged in users can add and object
 gatekeeper();
 
 // get the form input
 $access_id = get_input('access_id');
-$heading = get_input('heading');
+$header = get_input('header');
 
 $gweights = get_input('gweights'); 
 $time = get_input('time'); 
@@ -62,6 +70,7 @@ for( $i = 0; $i < 3; $i++ ) {
  $advanceds = get_input('advanceds');
  $aweights = get_input('aweights');
  
+ 
 // proof if _edit or _add action is needed
  $guid = get_input('id');
  if ($guid) {
@@ -81,7 +90,7 @@ for( $i = 0; $i < 3; $i++ ) {
    $action = "create";
  }
 
-   $cvranking->heading = $heading;
+   $cvranking->header = $header;
 
    $cvranking->gweights = $gweights;
    $cvranking->time = $time;
@@ -159,15 +168,14 @@ $cvranking->users = $users;
 
 $cvranking->advanceds = $advanceds;
 $cvranking->aweights = $aweights;
-
-$cvranking->title = $heading;
+// Titre déduit des autres infos = (typology :) jobtitle @ organisation
 $cvranking->subtype = 'cvranking';
 
 // allow access rights for the resume
 $cvranking->access_id = $access_id;
 
 // owner is logged in user
-$cvranking->owner_guid = elgg_get_logged_in_user_guid();
+$cvranking->owner_guid = get_loggedin_userid();
 
 // save to database
 $cvranking->save();
@@ -177,4 +185,4 @@ system_message(elgg_echo('resume:OK'));
 add_to_river('river/object/resume/create', $action, elgg_get_logged_in_user_guid(), $cvranking->guid);
 
 // forward user to a main page
-forward($CONFIG->wwwroot . "resumes/" . elgg_get_logged_in_user_entity()->username. "?tab=cvranking");
+forward($CONFIG->wwwroot . "resumes/" . elgg_get_logged_in_user_entity()->username);

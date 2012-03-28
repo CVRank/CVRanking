@@ -1,19 +1,19 @@
 <?php
-/**
- * cvranking object
- */
+
+/* Object's default view. "Edit" and "Delete" links are added based on object's ownership */
 
 global $CONFIG;
-$page_owner = elgg_get_page_owner_entity();
+$page_owner = page_owner_entity();
 if ($page_owner === false || is_null($page_owner)) {
-  $page_owner = elgg_get_logged_in_user_entity();
-  elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
+  $page_owner = get_loggedin_user();
+  set_page_owner(get_loggedin_userid());
 }
 
-$full = (elgg_get_context () != "view") ? false : true;
+$full = (get_context () != "view") ? false : true;
 // compact is for very compact listings with edit and delete links ; disables full view
-$compact = (elgg_get_context () != "index") ? false : true;
+$compact = (get_context () != "index") ? false : true;
 $url = $CONFIG->url;
+
 
 // Full and listing views
 if (!$compact) {
@@ -21,13 +21,14 @@ if (!$compact) {
   ?>
   <div>
     <p>
-      <h3><a href="<?php echo $vars['entity']->getURL(); ?>"><?php echo $vars['entity']->heading; ?></a></h3>
+      <strong><a href="<?php echo $vars['entity']->getURL(); ?>"><?php echo $vars['entity']->header; ?></a></strong>
     </p>
     
     <?php
     if ($full) {
       // Full view
-      echo '<br />';
+      echo '<br /><br />';
+      if ($vars['entity']->header) { echo '<p><strong>' . elgg_echo('resume:cvranking:heading') . ' :</strong> ' . $vars['entity']->header . '</p>'; } 
       
       // set values
       $cvr_array = set_cvrvalues ($vars['entity']);
@@ -57,10 +58,6 @@ if (!$compact) {
        foreach ($users as $keyuser => $user) {
        // prove that $user is not blank before looping
          if ($user != "") {
-           // take user guid
-           $query = "SELECT * FROM {$CONFIG->dbprefix}users_entity WHERE name='$user'";
-           $user_object = get_data_row($query);
-           $user_guid = $user_object->guid;
            // reset CVRs first
                $eduCVR = 0; 
                $workCVR = 0;  
@@ -73,7 +70,7 @@ if (!$compact) {
           
             if (($cvrtval == 'education') && ($gweights[0] != 0)) {
                
-               $edu_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'education', 'owner_guids' => $user_guid, 'limit' => 0));
+               $edu_array = get_user_objects ($user, 'education', 0, false, false, false);
                  
                foreach ($edu_array as $key => $value) {
                //$total_cvedu[$user] += educvrate($value, $cvr_array);
@@ -84,7 +81,7 @@ if (!$compact) {
                // prove that workexprience and gweights[] is not 0 to evaluate
             elseif (($cvrtval == 'workexperience') && ($gweights[1] != 0)) {
                
-              $work_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'workexperience', 'owner_guids' => $user_guid, 'limit' => 0));
+              $work_array = get_user_objects ($user, 'workexperience', 0, false, false, false);
                
               foreach ($work_array as $key => $value) {
                  $workCVR += workcvrate($value, $cvr_array);
@@ -93,7 +90,7 @@ if (!$compact) {
                // prove that language and gweights[] is not 0 to evaluate
             elseif (($cvrtval == 'language') && ($gweights[2] != 0)) {
                
-              $lang_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'language', 'owner_guids' => $user_guid, 'limit' => 0));
+              $lang_array = get_user_objects ($user, 'language', 0, false, false, false);
                
               foreach ($lang_array as $key => $value) {
                  $langCVR += langcvrate($value, $cvr_array, $lang_array);
@@ -102,7 +99,7 @@ if (!$compact) {
                // prove that research and gweights[] is not 0 to evaluate
             elseif (($cvrtval == 'research') && ($gweights[3] != 0)) {
                
-              $res_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'research', 'owner_guids' => $user_guid, 'limit' => 0));
+              $res_array = get_user_objects ($user, 'research', 0, false, false, false);
                
               foreach ($res_array as $key => $value) {
                   
@@ -112,7 +109,7 @@ if (!$compact) {
                // prove that publication and gweights[] is not 0 to evaluate
             elseif (($cvrtval == 'publication') && ($gweights[4] != 0)) {
                
-              $pub_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'publication', 'owner_guids' => $user_guid, 'limit' => 0));
+              $pub_array = get_user_objects ($user, 'publication', 0, false, false, false);
                
               foreach ($pub_array as $key => $value) {
                   
@@ -122,7 +119,7 @@ if (!$compact) {
                // prove that publication and gweights[] is not 0 to evaluate
             elseif (($cvrtval == 'skill') && ($gweights[5] != 0)) {
                
-              $skill_array = elgg_get_entities (array('types' => 'object', 'subtypes' => 'skill', 'owner_guids' => $user_guid, 'limit' => 0));
+              $skill_array = get_user_objects ($user, 'skill', 0, false, false, false);
                
               foreach ($skill_array as $key => $value) {
                   
@@ -130,24 +127,27 @@ if (!$compact) {
                }
             }
          }
-         // ADD all CVR of each user, and store it in array $CVRs
-           // For Elgg 1.7.x
-           //$userobject = get_user_entity_as_row ($user);
-           //  if (!$userobject) $userobject = get_group_entity_as_row ($user);
-           //$username = $userobject->name;
-           $CVRs[$user] = $eduCVR * $gweights[0] + $workCVR * $gweights[1]
+          // ADD ALL CVR IN ARRAY WITH REAL NAME
+           $userobject = get_user_entity_as_row ($user);
+              if (!$userobject) $userobject = get_group_entity_as_row ($user);
+           $username = $userobject->name;
+           $CVRs[$username] = $eduCVR * $gweights[0] + $workCVR * $gweights[1]
                            + $langCVR * $gweights[2] + $resCVR * $gweights[3]
                            + $pubCVR * $gweights[4] + $skillCVR * $gweights[5];
            
-           //PROOF
-            //echo $user; 
-            //echo ": ";
-            //print_r($CVRs[$username]);
+           echo $username; 
+           echo ": ";
+           print_r($CVRs[$username]);
           
+           echo "<br />";
+        
          }
        }
        
-     // Sort user array
+  
+    // AFTER ADDING ALL CVR FOR EACH USER
+    // 
+    // 1ST TURN USER_ID INTO USER_NAME
      
        if ($order == "CVRasc") {
           arsort($CVRs);
@@ -165,45 +165,49 @@ if (!$compact) {
        }
        $k = 1;
        $maxCVR = max($CVRs);
-       
-      // Print array
-  $title = 'resume:cvranking:CVR';
-  $title2 = $i + 1;
-  echo collapsiblebox("cvranking".$i, $title, false, false, false, 30, $title2);
+        echo '<div style="float:left; width:32%; padding-left:5px;';
+         if (!($i%2)) {
+            echo 'background-color:#ccc;">'; 
+         } 
+         else {
+            echo 'background-color:#f3f3f3;">';
+         }
         foreach ($CVRs as $cvkey => $cvval) {
         echo "$k. $cvkey:";
         $meanval = $cvval/$maxCVR * 100;
         $meanval = round_two($meanval);
-        echo elgg_view('resume/progressbar', array('importance' => $meanval,  
-            'position' => "float:right;",
+        echo elgg_view('resume/progressbar', array('importance' => $meanval, 
             'text' => "CVR: $meanval/100"));
         echo "<br /><br />";
         $k++;
         }
-        echo '</div></div></div>';
+        echo '</div>';
       }
     }
     echo '<div class="clearfloat"></div> <br />';
     
+      
+       //$edurank = maximaledu($total_cvedu, $page_owner->guid);
+       //$edurank_two = round_two($edurank);
+       
         echo $vars['owner'];
    
     } else {
        //Listing view
-      echo '<strong><a href="' . $vars['entity']->getURL() . '">';
-      echo elgg_echo('resume:view:more');
-      echo '</a></strong>';
+      echo '<a href="' . $vars['entity']->getURL() . '">en savoir plus..</a>';
+      
     }
    
     echo '<p>';
       // Edit & delete links
-      if (($page_owner->guid == elgg_get_logged_in_user_entity()->guid) && (elgg_get_context() != "profileprint")) {
+      if (($page_owner->guid == get_loggedin_user()->guid) && (get_context() != "profileprint")) {
         echo '<a href="' . $vars['url'] . 'mod/resume/cvranking.php?id=' . $vars['entity']->getGUID() . '">' . elgg_echo('resume:edit') . '</a>&nbsp; ';
         echo elgg_view("output/confirmlink", array( 'href' => $vars['url'] . "action/resume/delete?id=" . $vars['entity']->getGUID(),
             'text' => elgg_echo('resume:delete'), 'confirm' => elgg_echo('resume:delete:element'), )) . '&nbsp; ';
         echo elgg_view("editmenu", array('entity' => $vars['entity'])); // Allow the menu to be extended
       }
-      if (!$full && (elgg_get_context () != "profileprint")) {
-        $num_comments = $vars['entity']->countComments();
+      if (!$full && (get_context () != "profileprint")) {
+        $num_comments = elgg_count_comments($vars['entity']);
         echo '<a href="' . $vars['entity']->getURL() . '">' . sprintf(elgg_echo("comments")) . ' (' . $num_comments . ')</a><br />';
       }
     echo '</p>';
@@ -218,7 +222,7 @@ if (!$compact) {
   <?php
 } else {
   // Compact view : edit & delete links
-  if ($page_owner->guid == elgg_get_logged_in_user_entity()->guid) {
+  if ($page_owner->guid == get_loggedin_user()->guid) {
     echo '<a href="' . $vars['url'] . 'mod/resume/cvranking.php?id=' . $vars['entity']->getGUID() . '" title="' . elgg_echo('edit') . '">' . date('m/Y', $vars['entity']->startdate) . " &rarr; ";
     if ($vars['entity']->ongoing == 'ongoing') echo elgg_echo('resume:date:now'); else echo date('d/m/Y', $vars['entity']->enddate);
     echo '&nbsp;: ' . $vars['entity']->heading . '</a> &nbsp; ' 

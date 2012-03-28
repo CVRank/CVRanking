@@ -12,15 +12,11 @@ Valeurs à créer :
 */
 
 // Pour déterminer les préférences.. @todo
-$count_workexperiences = elgg_get_entities(array('types' => 'object', 'subtypes' => 'workexperience', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-$count_educations = elgg_get_entities(array('types' => 'object', 'subtypes' => 'education', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-$count_languages = elgg_get_entities(array('types' => 'object', 'subtypes' => 'language', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-//$count_foreign = count(get_user_objects_by_metadata($user->guid, "language", array('langtype'=>"foreign"), 99, 0));
-//$count_mother = $count_languages - $count_foreign;
-$count_researches = elgg_get_entities(array('types' => 'object', 'subtypes' => 'research', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-$count_publications = elgg_get_entities(array('types' => 'object', 'subtypes' => 'publication', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-$count_skills = elgg_get_entities(array('types' => 'object', 'subtypes' => 'skill', 'container_guids' => array($page_owner->guid), 'limit' => 0, 'count' => true));
-
+$count_workexperiences = count_user_objects($user->guid, "workexperience");
+$count_educations = count_user_objects($user->guid, "education");
+$count_languages = count_user_objects($user->guid, "language");
+$count_foreign = count(get_user_objects_by_metadata($user->guid, "language", array('langtype'=>"foreign"), 99, 0));
+$count_mother = $count_languages - $count_foreign;
 ?>
   
   <docinfo>
@@ -123,21 +119,21 @@ $count_skills = elgg_get_entities(array('types' => 'object', 'subtypes' => 'skil
   
   <workexperiencelist>
     <?php
-    $workexperiences = elgg_get_entities(array('types' => 'object', 'subtypes' => 'workexperience', 'container_guids' => array($page_owner->guid), 'limit' => 0));
+    $workexperiences = get_user_objects($user->guid, "workexperience", 99);
     foreach ($workexperiences as $ent) { echo elgg_view_entity($ent, false); }
     ?>
   </workexperiencelist>
   
   <educationlist>
     <?php
-    $educations = elgg_get_entities(array('types' => 'object', 'subtypes' => 'education', 'container_guids' => array($page_owner->guid), 'limit' => 0));
+    $educations = get_user_objects($user->guid, "education", 99);
     foreach ($educations as $ent) { echo elgg_view_entity($ent, false); }
     ?>
   </educationlist>
   
 	<languagelist>
     <?php
-    $languages = elgg_get_entities(array('types' => 'object', 'subtypes' => 'language', 'container_guids' => array($page_owner->guid), 'limit' => 0));
+    $languages = get_user_objects($user->guid, "language", 99);
     foreach ($languages as $ent) { echo elgg_view_entity($ent, false); }
     ?>
 	</languagelist>

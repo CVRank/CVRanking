@@ -8,8 +8,7 @@
  * @copyright Consultora Nivel7 Ltda.
  * @link http://www.nivel7.net
  */
-/* Object's default view. "Edit" and "Delete" links are added
-  based on object's ownership */
+/* Object's default view. "Edit" and "Delete" links are added based on object's ownership */
 $page_owner = page_owner_entity();
 if ($page_owner === false || is_null($page_owner)) {
   $page_owner = get_loggedin_user();
@@ -20,54 +19,33 @@ $full = (get_context () != "view") ? false : true;
 $compact = (get_context () != "index") ? false : true;
 $url = $CONFIG->url;
 
-  // set default CVR values
-  $cvr_array = set_defaultcvr ();
-  
+
 // Full and listing views
 if (!$compact) {
   echo elgg_view('resume/single_menu');
   ?>
-
   <div>
     <p>
-      <?php 
-      // Scoring
-      $importance = (int) pubscore ($vars['entity'], $cvr_array);
-      
-      echo elgg_view('resume/importancebar', array('importance' => $importance, 'text' => "Score: $importance/100")); 
-      ?>
-      <strong><a href="<?php echo $vars['entity']->getURL(); ?>"><?php echo $vars['entity']->heading; ?></a></strong> chez <strong><?php echo '<a href="' . $url . 'search/?tag=' . $vars['entity']->structure . '">' . $vars['entity']->structure; ?></a></strong>
       <?php
-      echo " (" . date('d/m/Y', $vars['entity']->startdate) . " &rarr; ";
-      if ($vars['entity']->ongoing == 'ongoing') echo elgg_echo('resume:date:now'); else echo date('d/m/Y', $vars['entity']->enddate);
-      echo ")";
+      echo elgg_view('resume/importancebar', array('importance' => $vars['entity']->importance));
+      if ($vars['entity']->skilltype) { echo '<p>' . elgg_echo('resume:skill_ciiee:typology') . '&nbsp;: ' . elgg_echo('resume:referential:c2i2e:' . $vars['entity']->skilltype) . '</p>'; }
       ?>
     </p>
     
     <?php
     if ($full) {
       // Full view
-      //if ($vars['entity']->typology) { echo '<p>' . elgg_echo('resume:experience:' . $vars['entity']->typology) . '</p>'; }
-      if ($vars['entity']->typology) { echo '<p>' . $vars['entity']->typology . '</p>'; }
-      ?>
-      
-      <?php if ($vars['entity']->contact) { echo '<p>' . elgg_echo('resume:publication:contact') . ' : ' . $vars['entity']->contact . '</p>'; } ?>
-      
-      <?php if ($vars['entity']->description) {
-    //    echo '<h4>' . elgg_echo('resume:experience:description') . '</h4>';
-        echo '<p>' . $vars['entity']->description . '</p>';
-      }
-      
+      echo '<p>' . $vars['entity']->skill . '</p>';
+    
     } else {
       // Compact view
       echo '<a href="' . $vars['entity']->getURL() . '">en savoir plus..</a>';
-      
     }
     
     echo '<p>';
       // Edit & delete links
       if (($page_owner->guid == get_loggedin_user()->guid) && (get_context() != "profileprint")) {
-        echo '<a href="' . $vars['url'] . 'mod/resume/publication.php?id=' . $vars['entity']->getGUID() . '">' . elgg_echo('resume:edit') . '</a>&nbsp; ';
+        echo '<a href="' . $vars['url'] . 'mod/resume/skill_ciiee.php?id=' . $vars['entity']->getGUID() . '">' . elgg_echo('resume:edit') . '</a>&nbsp; ';
         echo elgg_view("output/confirmlink", array( 'href' => $vars['url'] . "action/resume/delete?id=" . $vars['entity']->getGUID(),
             'text' => elgg_echo('resume:delete'), 'confirm' => elgg_echo('resume:delete:element'), )) . '&nbsp; ';
         echo elgg_view("editmenu", array('entity' => $vars['entity'])); // Allow the menu to be extended
@@ -88,11 +66,9 @@ if (!$compact) {
 } else {
   // Compact view : edit & delete links
   if ($page_owner->guid == get_loggedin_user()->guid) {
-    echo '<a href="' . $vars['url'] . 'mod/resume/publication.php?id=' . $vars['entity']->getGUID() . '" title="' . elgg_echo('edit') . '">' . date('m/Y', $vars['entity']->startdate) . "&rarr;";
-    if ($vars['entity']->ongoing == 'ongoing') echo elgg_echo('resume:date:now'); else echo date('d/m/Y', $vars['entity']->enddate);
-    echo '&nbsp;: ' . $vars['entity']->heading . '</a> &nbsp; ' 
+    echo '<a href="' . $vars['url'] . 'mod/resume/skill_ciiee.php?id=' . $vars['entity']->getGUID() . '" title="' . elgg_echo('edit') . '">' . elgg_echo('resume:referential:c2i2e:' . $vars['entity']->skilltype) . '</a> &nbsp; ' 
       . '<b>' . elgg_view("output/confirmlink", array( 'href' => $vars['url'] . "action/resume/delete?id=" . $vars['entity']->getGUID(), 'text' => 'x', 'confirm' => elgg_echo('resume:delete:element'), 'title' => elgg_echo('delete'))) . '</b>';
   } else {
-    echo '<a href="' . $vars['entity']->getURL() . '">' . $vars['entity']->heading . '</a>';
+    echo '<a href="' . $vars['entity']->getURL() . '">' . elgg_echo('resume:referential:c2i2e:' . $vars['entity']->skilltype) . '</a>';
   }
 }
